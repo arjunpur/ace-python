@@ -1,7 +1,7 @@
 from ace import ACEBulkLoader
 
 # Example usage of ACEBulkLoader
-loader = ACEBulkLoader(path="data/color_picking/ucsf_ace", data_type="explorer")
+loader = ACEBulkLoader(path="data/data_from_jessi/reports")
 data = loader.load()
 
 print(data)
