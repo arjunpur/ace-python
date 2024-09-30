@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import glob
 import logging
 
-from ace.constants import COL_AGE, COL_CONDITION, COL_GENDER, COL_GRADE, COL_HANDEDNESS, COL_MODULE, COL_NAME, COL_PID, COL_RT, COL_RW, COL_SUB_ID, COL_TIME
+import ace.constants as constants
 
 @dataclass
 class ACEBulkLoader:
@@ -20,6 +20,7 @@ class ACEBulkLoader:
     def __post_init__(self):
         self.logger = self._setup_logger()
         self._data_by_filename = self._load_files_on_init()
+        self._standardize_data(self._data_by_filename)
  
     @property
     def data_by_filename(self) -> dict:
@@ -42,7 +43,7 @@ class ACEBulkLoader:
             if self.verbose:
                 self.logger.info(f"Processing {file}")
             try:
-                data = self._load_ace_file(file)
+                data = pd.read_csv(file)
                 if data is not None and not data.empty:
                     data_by_filename[file] = data
             except Exception as e:
@@ -66,19 +67,24 @@ class ACEBulkLoader:
 
         return files
     
-    def _load_ace_file(self, file: str) -> pd.DataFrame:
-        df = pd.read_csv(file)
-
-        # Standardize column names
-        df = standardize_ace_column_names(df)
-        df = add_module_name(df, file)
+    def _standardize_data(self, data_by_file: dict[str, pd.DataFrame]):
+        for file, df in data_by_file.items():
+            df = standardize_ace_column_names(df)
+            df = add_module_name(df, file)
 
 
 def standardize_ace_column_names(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Standardizes the column names of the DataFrame to be consistent with the ACE format.
 
-    # Convert all column names to lowercase
-    new_names = [col.lower() for col in df.columns]
-    new_names = [replace_special_characters(name, replacement='_') for name in new_names]
+    - Convert all column names to lowercase.
+    - Replace special characters with underscores.
+    - Replace spaces with underscores.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to standardize.
+    """
+    new_names = [replace_special_characters(col, replacement='_') for col in df.columns]
     new_names = [replace_spaces(name, replacement='_') for name in new_names]
     df.columns = new_names
     return df
@@ -89,42 +95,17 @@ def replace_special_characters(name: str, replacement: str = '') -> str:
 def replace_spaces(name: str, replacement: str = '_') -> str:
     return re.sub(r' ', replacement, name)
 
-
 def add_module_name(df: pd.DataFrame, filename: str) -> pd.DataFrame:
-    """
-    Adds a 'module' column to the DataFrame based on the 'moduleName' column or the filename.
-
-    - If 'moduleName' exists in the DataFrame:
-        - Rename it to 'module'.
-        - Convert its values to uppercase and remove all spaces.
-    - If 'moduleName' does not exist:
-        - Extract the module from the filename.
-        - Convert it to uppercase and remove all spaces.
-        - Verify against the list of expected modules. If not matched, set to 'unknown'.
-
-    Args:
-        df (pd.DataFrame): The DataFrame to process.
-        filename (str): The filename from which to extract module information if 'moduleName' is absent.
-
-    Returns:
-        pd.DataFrame: The DataFrame with an added 'module' column.
-    """
-    if 'moduleName' in df.columns:
-        # Rename 'moduleName' to 'module'
-        df = df.rename(columns={'moduleName': COL_MODULE})
-        module_str_series = df[COL_MODULE].astype(str)
+    if constants.COL_MODULE_NAME in df.columns:
+        df = df.rename(columns={constants.COL_MODULE_NAME: constants.COL_MODULE})
+        module_str_series = df[constants.COL_MODULE].astype(str)
     else:
-        # Extract module from filename
         base_filename = os.path.basename(filename)
         name_without_ext = os.path.splitext(base_filename)[0]
         module_str_series = pd.Series([name_without_ext] * len(df))
 
     # Standardize the module strings: uppercase and remove spaces
-    module_str_series = module_str_series.str.upper().str.replace(' ', '', regex=False)
-
-    # Verify against ALL_MODULES, set to 'unknown' if not matched
-    df[COL_MODULE] = module_str_series.where(module_str_series.isin(ALL_MODULES), 'unknown')
-
+    df[constants.COL_MODULE] = module_str_series.str.upper().str.replace(' ', '', regex=False)
     return df
 
 def standardize_ace_ids(df: pd.DataFrame) -> pd.DataFrame:

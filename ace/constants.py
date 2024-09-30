@@ -28,3 +28,6 @@ COL_TRIAL_TYPE = "trial_type"
 COL_TRIAL_NUM = "trial_number"
 COL_BLOCK_HALF = "half"
 COL_MODULE = "module"
+# "moduleName" is the column name for the module name in raw ACE data from Nexus
+COL_MODULE_NAME = "moduleName"
+
