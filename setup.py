@@ -7,6 +7,9 @@ setup(
     install_requires=[
         "pandas",
         "numpy",
+        "matplotlib",
+        "seaborn",
+        "openpyxl",  # For Excel export
     ],
     author="Arjun Puri",
     author_email="arjunpur2@gmail.com",
@@ -20,4 +23,5 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
+    scripts=['ace_analysis.py', 'scripts/generate_sample_data.py'],
 )

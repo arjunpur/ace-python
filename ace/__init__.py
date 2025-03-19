@@ -1,4 +1,6 @@
-from .loader import ACEBulkLoader
-from .chatgptloader import load_ace_bulk
+"""
+ACE (Adaptive Cognitive Evaluation) Analysis Package.
 
-__all__ = ['ACEBulkLoader', 'process_by_module', 'process_ace_complete', 'load_ace_bulk']
+This package provides tools for loading, processing, and analyzing data
+from UCSF's ACE platform, a collection of games measuring executive function.
+"""

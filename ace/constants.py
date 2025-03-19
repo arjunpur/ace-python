@@ -1,33 +1,124 @@
-# See here for descriptions on each column:
-# https://docs.google.com/spreadsheets/d/1xA6TZUULkrhLeA9MkEF8xD_kzulKRCMD7Y3_5hwLHdE/edit?gid=743109700#gid=743109700
-COL_FILE = "file"
-COL_TIME = "time"
-COL_N_FINISHED = "times_finished_game"
-COL_RT = "rt"
-COL_CORRECT_BUTTON = "correct_button"
-COL_PREV_CORRECT_BUTTON = "previous_correct_button"
-COL_CORRECT_RESPONSE = "correct_response"
-COL_RW = "rw"
-COL_LATE_RESPONSE = "late_response"
-COL_PREV_LATE_RESPONSE = "previous_late_response"
-COL_CONDITION = "condition"
-COL_STUDY_COND = "study_condition"
-COL_PID = "pid"
-COL_BID = "bid"
-COL_BID_SHORT = "bid_short"
-COL_NAME = "name"
-COL_AGE = "age"
-COL_GRADE = "grade"
-COL_GENDER = "gender"
-COL_HANDEDNESS = "handedness"
-COL_SUB_ID = "subid"
-COL_PRACTICE = "session_type"
-COL_PRACTICE_RD = "practice_round"
-COL_PRACTICE_COUNT = "practice_count"
-COL_TRIAL_TYPE = "trial_type"
-COL_TRIAL_NUM = "trial_number"
-COL_BLOCK_HALF = "half"
-COL_MODULE = "module"
-# "moduleName" is the column name for the module name in raw ACE data from Nexus
-COL_MODULE_NAME = "moduleName"
+"""
+Constants used throughout the ACE analysis package.
+"""
 
+# List of all ACE module names
+MODULE_NAMES = [
+    "ADP",
+    "BRT",
+    "BOXED",
+    "COLOR_PICKING",
+    "COMPASS",
+    "FILTER",
+    "FLANKER",
+    "ISHIHARA",
+    "SAAT_SUSTAINED",
+    "SAAT_IMPULSIVE",
+    "SPATIAL_SPAN_FORWARD",
+    "SPATIAL_SPAN_BACKWARD",
+    "STROOP",
+    "TASKSWITCH",
+    "TNT",
+]
+
+# Mapping of module names to descriptive names
+MODULE_DESCRIPTIONS = {
+    "ADP": "Face Switch",
+    "BRT": "Basic Response Time",
+    "BOXED": "Boxed",
+    "COLOR_PICKING": "Color Swatch",
+    "COMPASS": "Compass",
+    "FILTER": "Filter",
+    "FLANKER": "Flanker Arrow",
+    "ISHIHARA": "What's This Number",
+    "SAAT_SUSTAINED": "Mars UFO (Sustained)",
+    "SAAT_IMPULSIVE": "Venus UFO (Impulsive)",
+    "SPATIAL_SPAN_FORWARD": "Gem Chaser",
+    "SPATIAL_SPAN_BACKWARD": "Gem Chaser (Backwards)",
+    "STROOP": "Color Tricker",
+    "TASKSWITCH": "Sun and Moon",
+    "TNT": "Triangle Trace",
+}
+
+# Module conditions
+MODULE_CONDITIONS = {
+    "BRT": ["Right Index", "Left Index", "Right Thumb", "Left Thumb"],
+    "BOXED": ["Feature 4", "Feature 12", "Congruent 4", "Congruent 12"],
+    "COLOR_PICKING": [],
+    "STROOP": ["Color only", "Congruent", "Incongruent"],
+    "COMPASS": ["Valid", "Invalid", "Neutral"],
+    "ADP": ["Happy", "Negative"],
+    "FILTER": ["2T 0D", "4T 0D", "2T 2D", "2T 4D", "4T 2D"],
+    "FLANKER": ["Congruent", "Incongruent"],
+    "SPATIAL_SPAN_FORWARD": [],
+    "SPATIAL_SPAN_BACKWARD": [],
+    "TASKSWITCH": ["Stay Incongruent", "Switch Incongruent", "Stay Congruent", "Switch Congruent"],
+    "TNT": ["Go/no-go Tap", "Trace", "Go/no-go & Trace"],
+    "SAAT_IMPULSIVE": [],
+    "SAAT_SUSTAINED": [],
+    "ISHIHARA": [],
+}
+
+# Trial result categories
+TRIAL_RESULTS = [
+    "successful",
+    "wrong",
+    "late",
+    "unanswered",
+    "invalid",
+]
+
+# Outcome metrics
+OUTCOMES = [
+    "accuracy",
+    "response_window",
+    "reaction_time",
+]
+
+# Summary statistics
+SUMMARY_METRICS = [
+    "total_trials",
+    "total_trials_responded",
+    "mean",
+    "median",
+    "stdv",
+    "rcs",
+]
+
+# Data subsets for analysis
+SUBSETS = [
+    "correct",
+    "incorrect",
+    "overall",
+    "first_half",
+    "second_half",
+    "early",
+    "late_incorrect",
+    "prev_incorrect",
+    "prev_correct",
+]
+
+# Column name mappings for standardization
+COLUMN_MAPPINGS = {
+    "participantId": "participant_id",
+    "participantTaskId": "participant_task_id",
+    "timeGameplayedUtc": "time_gameplayed_utc",
+    "finishStatus": "finish_status",
+    "trialNumber": "trial_number",
+    "sessionType": "session_type",
+    "responseWindow": "response_window",
+    "responseTime": "response_time",
+    "feedbackResult": "result",
+    "GameType": "module",
+}
+
+# Required columns for analysis
+REQUIRED_COLUMNS = [
+    "module",
+    "participant_id",
+    "trial_number",
+    "response_time",
+    "response_window",
+    "result",
+    "Condition",
+]
